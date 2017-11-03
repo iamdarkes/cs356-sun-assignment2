@@ -2,6 +2,11 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeModel;
 
 public class AdminControlPanel extends JPanel {
 
@@ -51,7 +56,7 @@ public class AdminControlPanel extends JPanel {
         JPanel showPanel = new JPanel(new BorderLayout());
         showPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
-        JTree userJTree = new JTree();
+        JTree userJTree = new JTree(new DefaultMutableTreeNode("Root"));
         userJTree.setScrollsOnExpand(true);
         userJTree.setPreferredSize(new Dimension(400, 500));
         treeViewPanel.add(userJTree);
@@ -59,8 +64,41 @@ public class AdminControlPanel extends JPanel {
         outerMostPanel.add(treeViewPanel, BorderLayout.WEST);
 
         JTextField addUserTextField = new JTextField(10);
+        final String[] addUserText = {""};
+        addUserTextField.getDocument().addDocumentListener(new DocumentListener() {
+            //when change is made to text
+            @Override
+            public void insertUpdate(DocumentEvent documentEvent) {
+                addUserText[0] = addUserTextField.getText();
+                System.out.println(addUserText[0]);
+            }
 
+            //when field is cleared.
+            @Override
+            public void removeUpdate(DocumentEvent documentEvent) {
+                addUserText[0] = addUserTextField.getText();
+                System.out.println(addUserText[0]);
+            }
+
+            //not sure when this happens
+            @Override
+            public void changedUpdate(DocumentEvent documentEvent) {
+                System.out.println("This happened");
+            }
+        });
         JButton addUserButton = new JButton("Add User");
+        addUserButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                if(!addUserText[0].equals("")) {
+                    DefaultTreeModel model = (DefaultTreeModel) userJTree.getModel();
+                    DefaultMutableTreeNode root = (DefaultMutableTreeNode) model.getRoot();
+                    model.insertNodeInto(new DefaultMutableTreeNode(addUserText[0]), root, root.getChildCount());
+                } else {
+                    JOptionPane.showMessageDialog(null, "Please enter a user name.");
+                }
+            }
+        });
 
         JTextField addGroupTextField = new JTextField(10);
         JButton addGroupButton = new JButton("Add Group");
