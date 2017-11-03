@@ -3,7 +3,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.*;
 
-public class AdminControlPanel extends JPanel implements ActionListener{
+public class AdminControlPanel extends JPanel {
 
     private static AdminControlPanel instance;
 
@@ -17,7 +17,7 @@ public class AdminControlPanel extends JPanel implements ActionListener{
 
         //JTree nested inside only, nested directly in outerMostPanel
         JPanel treeViewPanel = new JPanel(new BorderLayout());
-        treeViewPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5 ,5));
+        treeViewPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
         //JTextField and JButton for adding users nested inside, nested directly in addPanel
         JPanel addUserPanel = new JPanel(new BorderLayout());
@@ -53,7 +53,7 @@ public class AdminControlPanel extends JPanel implements ActionListener{
 
         JTree userJTree = new JTree();
         userJTree.setScrollsOnExpand(true);
-        userJTree.setPreferredSize(new Dimension(400,500));
+        userJTree.setPreferredSize(new Dimension(400, 500));
         treeViewPanel.add(userJTree);
         outerMostPanel.add(outerEastPanel, BorderLayout.EAST);
         outerMostPanel.add(treeViewPanel, BorderLayout.WEST);
@@ -66,17 +66,50 @@ public class AdminControlPanel extends JPanel implements ActionListener{
         JButton addGroupButton = new JButton("Add Group");
 
         JButton openUserViewButton = new JButton("Open User View");
+        openUserViewButton.setActionCommand("OPEN_USER_VIEW");
+        openUserViewButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                new UserViewPanel();
+            }
+        });
 
         openUserViewPanel.add(openUserViewButton, BorderLayout.CENTER);
 
         JButton showUserTotalButton = new JButton("Show User Total");
+        showUserTotalButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                JOptionPane.showMessageDialog(null, "User Total: ");
+            }
+        });
+
         JButton showGroupTotalButton = new JButton("Show Group Total");
+        showGroupTotalButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                JOptionPane.showMessageDialog(null, "Group Total: ");
+            }
+        });
 
         showTopPanel.add(showUserTotalButton, BorderLayout.WEST);
         showTopPanel.add(showGroupTotalButton, BorderLayout.EAST);
 
         JButton showMessagesTotalButton = new JButton("Show Messages Total");
+        showMessagesTotalButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                JOptionPane.showMessageDialog(null, "Messages Total: ");
+            }
+        });
+
         JButton showPositivePercentageButton = new JButton("Show Positive Percentage");
+        showPositivePercentageButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                JOptionPane.showMessageDialog(null, "Positive Percentage: ");
+            }
+        });
 
         showBottomPanel.add(showMessagesTotalButton, BorderLayout.WEST);
         showBottomPanel.add(showPositivePercentageButton, BorderLayout.EAST);
@@ -85,14 +118,13 @@ public class AdminControlPanel extends JPanel implements ActionListener{
         showPanel.add(showBottomPanel, BorderLayout.SOUTH);
 
         addUserPanel.add(addUserTextField, BorderLayout.WEST);
-
         addUserPanel.add(addUserButton, BorderLayout.EAST);
 
         addGroupPanel.add(addGroupButton, BorderLayout.EAST);
         addGroupPanel.add(addGroupTextField, BorderLayout.WEST);
 
-        addPanel.add(addUserPanel,BorderLayout.NORTH);
-        addPanel.add(addGroupPanel,BorderLayout.SOUTH);
+        addPanel.add(addUserPanel, BorderLayout.NORTH);
+        addPanel.add(addGroupPanel, BorderLayout.SOUTH);
 
         outerEastPanel.add(addPanel, BorderLayout.NORTH);
         outerEastPanel.add(openUserViewPanel, BorderLayout.CENTER);
@@ -103,19 +135,11 @@ public class AdminControlPanel extends JPanel implements ActionListener{
         frame.setVisible(true);
     }
 
-    // React to the user pushing the Change button.
-    public void actionPerformed(ActionEvent e) {
-        //theLabel.setText(htmlTextArea.getText());
-    }
-
     /**
-     * Create the GUI and show it. For thread safety, this method should be
-     * invoked from the event-dispatching thread.
+     * Create the GUI and show it using Singleton pattern.
      */
-
-
     public static AdminControlPanel getInstance() {
-        if(instance == null) {
+        if (instance == null) {
             instance = new AdminControlPanel();
         }
         return instance;
