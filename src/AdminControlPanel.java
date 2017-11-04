@@ -4,13 +4,19 @@ import java.awt.event.ActionListener;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeModel;
+import javax.swing.tree.TreePath;
 
 public class AdminControlPanel extends JPanel {
 
     private static AdminControlPanel instance;
+    private static int userTotal = 0;
+    //root group is group 1
+    private static int groupTotal = 1;
 
     private AdminControlPanel() {
 
@@ -56,9 +62,19 @@ public class AdminControlPanel extends JPanel {
         JPanel showPanel = new JPanel(new BorderLayout());
         showPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
-        JTree userJTree = new JTree(new DefaultMutableTreeNode("Root"));
+        DefaultMutableTreeNode root = new DefaultMutableTreeNode("Root");
+        JTree userJTree = new JTree(root);
         userJTree.setScrollsOnExpand(true);
         userJTree.setPreferredSize(new Dimension(400, 500));
+        final DefaultMutableTreeNode[] selectedNode = new DefaultMutableTreeNode[1];
+        userJTree.addTreeSelectionListener(new TreeSelectionListener() {
+            @Override
+            public void valueChanged(TreeSelectionEvent treeSelectionEvent) {
+                 selectedNode[0] = (DefaultMutableTreeNode)userJTree.getLastSelectedPathComponent();
+            }
+        });
+        DefaultMutableTreeNode firstLeaf = ((DefaultMutableTreeNode)userJTree.getModel().getRoot()).getFirstLeaf();
+        userJTree.setSelectionPath(new TreePath(firstLeaf.getPath()));
         treeViewPanel.add(userJTree);
         outerMostPanel.add(outerEastPanel, BorderLayout.EAST);
         outerMostPanel.add(treeViewPanel, BorderLayout.WEST);
@@ -93,7 +109,8 @@ public class AdminControlPanel extends JPanel {
                 if(!addUserText[0].equals("")) {
                     DefaultTreeModel model = (DefaultTreeModel) userJTree.getModel();
                     DefaultMutableTreeNode root = (DefaultMutableTreeNode) model.getRoot();
-                    model.insertNodeInto(new DefaultMutableTreeNode(addUserText[0]), root, root.getChildCount());
+                    model.insertNodeInto(new DefaultMutableTreeNode(addUserText[0]), selectedNode[0], selectedNode[0].getChildCount());
+                    userTotal++;
                 } else {
                     JOptionPane.showMessageDialog(null, "Please enter a user name.");
                 }
@@ -101,10 +118,44 @@ public class AdminControlPanel extends JPanel {
         });
 
         JTextField addGroupTextField = new JTextField(10);
-        JButton addGroupButton = new JButton("Add Group");
+        final String[] addGroupText = {""};
+        addGroupTextField.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent documentEvent) {
+                addGroupText[0] = addGroupTextField.getText();
+                System.out.println(addGroupText[0]);
+            }
 
+            @Override
+            public void removeUpdate(DocumentEvent documentEvent) {
+                addGroupText[0] = addGroupTextField.getText();
+                System.out.println(addGroupText[0]);
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent documentEvent) {
+                addGroupText[0] = addGroupTextField.getText();
+                System.out.println(addGroupText[0]);
+            }
+        });
+        JButton addGroupButton = new JButton("Add Group");
+        addGroupButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+
+                if(!addGroupText[0].equals("")) {
+                    DefaultTreeModel model = (DefaultTreeModel) userJTree.getModel();
+                    DefaultMutableTreeNode root = (DefaultMutableTreeNode) model.getRoot();
+                    //model.insertNodeInto(new DefaultMutableTreeNode(addGroupText[0]), root, root.getChildCount());
+                    model.insertNodeInto(new DefaultMutableTreeNode(addGroupText[0]), selectedNode[0], selectedNode[0].getChildCount());
+                    groupTotal++;
+
+                } else {
+                    JOptionPane.showMessageDialog(null, "Please enter a group name.");
+                }
+            }
+        });
         JButton openUserViewButton = new JButton("Open User View");
-        openUserViewButton.setActionCommand("OPEN_USER_VIEW");
         openUserViewButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
@@ -118,7 +169,7 @@ public class AdminControlPanel extends JPanel {
         showUserTotalButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                JOptionPane.showMessageDialog(null, "User Total: ");
+                JOptionPane.showMessageDialog(null, "User Total: " + userTotal);
             }
         });
 
@@ -126,7 +177,7 @@ public class AdminControlPanel extends JPanel {
         showGroupTotalButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                JOptionPane.showMessageDialog(null, "Group Total: ");
+                JOptionPane.showMessageDialog(null, "Group Total: " + groupTotal);
             }
         });
 
@@ -171,6 +222,12 @@ public class AdminControlPanel extends JPanel {
         frame.setContentPane(outerMostPanel);
         frame.pack();
         frame.setVisible(true);
+    }
+
+    private void addChilds(DefaultMutableTreeNode rootNode) {
+        DefaultMutableTreeNode subDirectory = new DefaultMutableTreeNode("yes");
+        addChilds(subDirectory);
+        rootNode.add(subDirectory);
     }
 
     /**
