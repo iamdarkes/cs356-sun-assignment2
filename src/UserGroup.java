@@ -12,6 +12,13 @@ public class UserGroup {
         this.groupId = UUID.randomUUID();
     }
 
+    public UserGroup(UUID groupId, String name, List<User> users, List<UserGroup> userGroups) {
+        this.groupId = groupId;
+        this.name = name;
+        this.users = users;
+        this.userGroups = userGroups;
+    }
+
     public String getName() {
         return name;
     }

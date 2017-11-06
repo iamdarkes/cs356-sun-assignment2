@@ -109,7 +109,7 @@ public class AdminControlPanel extends JPanel {
                 if(!addUserText[0].equals("")) {
                     DefaultTreeModel model = (DefaultTreeModel) userJTree.getModel();
                     DefaultMutableTreeNode root = (DefaultMutableTreeNode) model.getRoot();
-                    model.insertNodeInto(new DefaultMutableTreeNode(addUserText[0]), selectedNode[0], selectedNode[0].getChildCount());
+                    model.insertNodeInto(new DefaultMutableTreeNode(new User(addUserText[0])), selectedNode[0], selectedNode[0].getChildCount());
                     userTotal++;
                 } else {
                     JOptionPane.showMessageDialog(null, "Please enter a user name.");
@@ -159,7 +159,7 @@ public class AdminControlPanel extends JPanel {
         openUserViewButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                new UserViewPanel();
+                new UserViewPanel((User)selectedNode[0].getUserObject());
             }
         });
 

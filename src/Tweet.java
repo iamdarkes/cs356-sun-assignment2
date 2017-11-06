@@ -1,12 +1,19 @@
 import java.util.UUID;
 
 public class Tweet {
-    private UUID userId;
+    private User user;
     private String message;
     private UUID tweetId;
 
     public Tweet() {
         this.tweetId = UUID.randomUUID();
+    }
+
+
+    public Tweet(User user, String message, UUID tweetId) {
+        this.user = user;
+        this.message = message;
+        this.tweetId = tweetId;
     }
 
     public UUID getTweetId() {
@@ -17,12 +24,12 @@ public class Tweet {
         this.tweetId = tweetId;
     }
 
-    public UUID getUserId() {
-        return userId;
+    public User getUser() {
+        return user;
     }
 
-    public void setUserId(UUID userId) {
-        this.userId = userId;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public String getMessage() {
@@ -36,7 +43,7 @@ public class Tweet {
     @Override
     public String toString() {
         return "Tweet{" +
-                "userId=" + userId +
+                "userName=" + user.getName() +
                 ", message='" + message + '\'' +
                 ", tweetId=" + tweetId +
                 '}';

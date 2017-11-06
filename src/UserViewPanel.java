@@ -4,12 +4,18 @@ import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.UUID;
 
 public class UserViewPanel extends JPanel {
 
-    public UserViewPanel() {
-        JFrame frame = new JFrame("User View");
+    FollowingDefaultListModelObserver followingModel;
+    FeedDefaultListModelObserver feedModel;
+
+    public UserViewPanel(User user) {
+        JFrame frame = new JFrame(user.getName() + " View " + user.getUserId());
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+
+        System.out.println(user.toString());
 
         //all elements nested inside
         JPanel outerMostPanel = new JPanel(new BorderLayout());
@@ -47,13 +53,13 @@ public class UserViewPanel extends JPanel {
         bottomPanel.add(tweetPanel, BorderLayout.NORTH);
         bottomPanel.add(feedPanel, BorderLayout.SOUTH);
 
-        DefaultListModel followingModel = new DefaultListModel();
-        followingModel.addElement(new User());
-        followingModel.addElement("John Smith");
-        followingModel.addElement("Kathy Green");
-        followingModel.addElement("Jane Doe");
-        followingModel.addElement("John Smith");
-        followingModel.addElement("Kathy Green");
+        followingModel = new FollowingDefaultListModelObserver();
+        //User user1 = new User(UUID.randomUUID(), new ArrayList<>(),new ArrayList<>(),new ArrayList<>(),"BOB");
+        //User user2 = new User(UUID.randomUUID(), new ArrayList<>(),new ArrayList<>(),new ArrayList<>(),"BOB");
+        //user.addObserver(user);
+        //user2.addObserver(user);
+        user.addObserver(followingModel);
+        //followingModel.addElement(user);
 
         JTextField userIdTextField = new JTextField(10);
         final String[] userIdText = {""};
@@ -76,12 +82,31 @@ public class UserViewPanel extends JPanel {
                 System.out.println(userIdText[0]);
             }
         });
+
+        if(user.getFeed()!= null) {
+            for (User u : user.getFollowing()) {
+                if(!followingModel.contains(u))
+                    //followingModel.addElement(u.getName());
+                    followingModel.addElement(u);
+            }
+        }
         JButton followUserButton = new JButton("Follow User");
         followUserButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 if(!userIdText[0].equals("")) {
-                    followingModel.addElement(userIdText[0]);
+                    User following = new User(userIdText[0]);
+
+                    ///user.addFollowing(following);
+
+                    //user.notifyObservers();
+                    //user.update(user, following);
+                    user.changedData(following);
+                    //user.notifyObservers();
+                    //followingModel.addElement(following.getName() + " " + following.getUserId());
+                    //update(user, following);
+
+
                 } else {
                     JOptionPane.showMessageDialog(null, "Please enter a user to follow.");
                 }
@@ -99,13 +124,9 @@ public class UserViewPanel extends JPanel {
         JScrollPane followingListScroller = new JScrollPane(followingJList);
         followingPanel.add(followingListScroller);
 
-        DefaultListModel feedModel = new DefaultListModel();
-        feedModel.addElement("Went outside");
-        feedModel.addElement("Walked up some stairs");
-        feedModel.addElement("ate");
-        feedModel.addElement("bought a dog");
-        feedModel.addElement("Ran a really long marathon and now I'm tired");
-        feedModel.addElement("text text text this is to see what happens with long messages");
+        feedModel = new FeedDefaultListModelObserver();
+        user.addObserver(feedModel);
+        //feedModel.addElement(user.getFeed());
 
         JTextField tweetTextField = new JTextField(10);
         final String[] tweetText = {""};
@@ -128,12 +149,25 @@ public class UserViewPanel extends JPanel {
                 System.out.println(tweetText[0]);
             }
         });
+
+        if(user.getFeed()!= null) {
+            for (Tweet t : user.getFeed()) {
+                if(!feedModel.contains(t))
+                    //feedModel.addElement(t.getUser().getName() + " : " + t.getMessage());
+                    feedModel.addElement(t);
+            }
+        }
         JButton tweetButton = new JButton("Post Tweet");
         tweetButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 if(!tweetText[0].equals("")) {
-                    feedModel.addElement(tweetText[0]);
+                    Tweet tweet = new Tweet(user, tweetText[0], UUID.randomUUID());
+                    //user.addFeed(tweet);
+                    //feedModel.addElement(tweet.getMessage());
+
+                    user.changedData(tweet);
+
                 } else {
                     JOptionPane.showMessageDialog(null, "Please enter a something to tweet.");
                 }
