@@ -1,18 +1,21 @@
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import javax.swing.*;
+import java.util.Arrays;
+import java.util.List;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 
 public class AdminControlPanel extends JPanel {
 
+    public static List<View> allRootViews = new ArrayList<>();
     private static AdminControlPanel instance;
     private static int userTotal = 0;
     //root group is group 1
@@ -20,47 +23,58 @@ public class AdminControlPanel extends JPanel {
 
     private AdminControlPanel() {
 
-        JFrame frame = new JFrame("Mini Twitter");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        //Demonstrate Composite pattern with Frame, Panels and Buttons
+        TwitterJFrame tJFrame = new TwitterJFrame();
 
         //all elements nested inside
         JPanel outerMostPanel = new JPanel(new BorderLayout());
 
         //JTree nested inside only, nested directly in outerMostPanel
-        JPanel treeViewPanel = new JPanel(new BorderLayout());
-        treeViewPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        TwitterJPanel treeViewPanel = new TwitterJPanel(new BorderLayout());
 
         //JTextField and JButton for adding users nested inside, nested directly in addPanel
-        JPanel addUserPanel = new JPanel(new BorderLayout());
-        addUserPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        TwitterJPanel addUserPanel = new TwitterJPanel(new BorderLayout());
 
         //JTextField and JButton for adding groups nested inside, nested directly in addPanel
-        JPanel addGroupPanel = new JPanel(new BorderLayout());
-        addGroupPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        TwitterJPanel addGroupPanel = new TwitterJPanel(new BorderLayout());
 
         //addUserPanel and addGroupPanel nested directly inside, nested directly in outerEastPanel
-        JPanel addPanel = new JPanel(new BorderLayout());
-        addPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        TwitterJPanel addPanel = new TwitterJPanel(new BorderLayout());
 
         //JButton openUserView nested directly inside, nested directly in outerEastPanel
         JPanel openUserViewPanel = new JPanel(new BorderLayout());
         openUserViewPanel.setBorder(BorderFactory.createEmptyBorder(150, 5, 150, 5));
 
         //addPanel, openUserViewPanel, showPanel nested directly inside, nested directly in outerMostPanel
-        JPanel outerEastPanel = new JPanel(new BorderLayout());
-        outerEastPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        TwitterJPanel outerEastPanel = new TwitterJPanel(new BorderLayout());
 
         //JButtons showUserTotal, showGroupTotal nested directly inside, inside showPanel
-        JPanel showTopPanel = new JPanel(new BorderLayout());
-        showTopPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        TwitterJPanel showTopPanel = new TwitterJPanel(new BorderLayout());
 
         //JButtons showMessagesTotal, showPositivePercentage nested directly inside, inside showPanel
-        JPanel showBottomPanel = new JPanel(new BorderLayout());
-        showBottomPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        TwitterJPanel showBottomPanel = new TwitterJPanel(new BorderLayout());
 
         //showTopPanel, showBottomPanel nested inside, inside outerEastPanel
-        JPanel showPanel = new JPanel(new BorderLayout());
-        showPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        TwitterJPanel showPanel = new TwitterJPanel(new BorderLayout());
+
+        TwitterJButton addUserButton = new TwitterJButton("Add User");
+        TwitterJButton addGroupButton = new TwitterJButton("Add Group");
+        TwitterJButton openUserViewButton = new TwitterJButton("Open User View");
+        TwitterJButton showUserTotalButton = new TwitterJButton("Show User Total");
+        TwitterJButton showGroupTotalButton = new TwitterJButton("Show Group Total");
+        TwitterJButton showMessagesTotalButton = new TwitterJButton("Show Messages Total");
+        TwitterJButton showPositivePercentageButton = new TwitterJButton("Show Positive Percentage");
+
+        Window window = new Window();
+        window.setViews(Arrays.asList(new View[]{tJFrame, addUserButton, addGroupButton, openUserViewButton,
+                 showUserTotalButton, showGroupTotalButton, showMessagesTotalButton,
+                showPositivePercentageButton, treeViewPanel, addUserPanel, addGroupPanel, addPanel,
+                outerEastPanel, showTopPanel, showBottomPanel, showPanel}));
+        window.display();
+
+        for(View v : AdminControlPanel.allRootViews) {
+            v.display();
+        }
 
         DefaultMutableTreeNode root = new DefaultMutableTreeNode("Root");
         JTree userJTree = new JTree(root);
@@ -102,7 +116,6 @@ public class AdminControlPanel extends JPanel {
                 System.out.println("This happened");
             }
         });
-        JButton addUserButton = new JButton("Add User");
         addUserButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
@@ -138,7 +151,6 @@ public class AdminControlPanel extends JPanel {
                 System.out.println(addGroupText[0]);
             }
         });
-        JButton addGroupButton = new JButton("Add Group");
         addGroupButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
@@ -155,7 +167,6 @@ public class AdminControlPanel extends JPanel {
                 }
             }
         });
-        JButton openUserViewButton = new JButton("Open User View");
         openUserViewButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
@@ -165,7 +176,6 @@ public class AdminControlPanel extends JPanel {
 
         openUserViewPanel.add(openUserViewButton, BorderLayout.CENTER);
 
-        JButton showUserTotalButton = new JButton("Show User Total");
         showUserTotalButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
@@ -173,7 +183,6 @@ public class AdminControlPanel extends JPanel {
             }
         });
 
-        JButton showGroupTotalButton = new JButton("Show Group Total");
         showGroupTotalButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
@@ -184,7 +193,6 @@ public class AdminControlPanel extends JPanel {
         showTopPanel.add(showUserTotalButton, BorderLayout.WEST);
         showTopPanel.add(showGroupTotalButton, BorderLayout.EAST);
 
-        JButton showMessagesTotalButton = new JButton("Show Messages Total");
         showMessagesTotalButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
@@ -192,7 +200,6 @@ public class AdminControlPanel extends JPanel {
             }
         });
 
-        JButton showPositivePercentageButton = new JButton("Show Positive Percentage");
         showPositivePercentageButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
@@ -219,9 +226,13 @@ public class AdminControlPanel extends JPanel {
         outerEastPanel.add(openUserViewPanel, BorderLayout.CENTER);
         outerEastPanel.add(showPanel, BorderLayout.SOUTH);
 
-        frame.setContentPane(outerMostPanel);
-        frame.pack();
-        frame.setVisible(true);
+//        frame.setContentPane(outerMostPanel);
+//        frame.pack();
+//        frame.setVisible(true);
+
+        tJFrame.setContentPane(outerMostPanel);
+        tJFrame.pack();
+        tJFrame.setVisible(true);
     }
 
     /**
