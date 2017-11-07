@@ -23,6 +23,17 @@ public class AdminControlPanel extends JPanel {
 
     private AdminControlPanel() {
 
+        UserCounter userCounter = new UserCounter();
+        GroupCounter groupCounter = new GroupCounter();
+
+        VisitorCollection visitorCollection = new VisitorCollection();
+        visitorCollection.setCollection(Arrays.asList(new TwitterElement[]{userCounter, groupCounter}));
+
+        UserCountVisitor userCountVisitor = new UserCountVisitor();
+        GroupCountVisitor groupCountVisitor = new GroupCountVisitor();
+
+
+
         //Demonstrate Composite pattern with Frame, Panels and Buttons
         TwitterJFrame tJFrame = new TwitterJFrame();
 
@@ -120,6 +131,7 @@ public class AdminControlPanel extends JPanel {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 if(!addUserText[0].equals("")) {
+                    visitorCollection.accept(userCountVisitor);
                     DefaultTreeModel model = (DefaultTreeModel) userJTree.getModel();
                     DefaultMutableTreeNode root = (DefaultMutableTreeNode) model.getRoot();
                     model.insertNodeInto(new DefaultMutableTreeNode(new User(addUserText[0])), selectedNode[0], selectedNode[0].getChildCount());
@@ -156,6 +168,7 @@ public class AdminControlPanel extends JPanel {
             public void actionPerformed(ActionEvent actionEvent) {
 
                 if(!addGroupText[0].equals("")) {
+                    visitorCollection.accept(groupCountVisitor);
                     DefaultTreeModel model = (DefaultTreeModel) userJTree.getModel();
                     DefaultMutableTreeNode root = (DefaultMutableTreeNode) model.getRoot();
                     //model.insertNodeInto(new DefaultMutableTreeNode(addGroupText[0]), root, root.getChildCount());
@@ -179,14 +192,16 @@ public class AdminControlPanel extends JPanel {
         showUserTotalButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                JOptionPane.showMessageDialog(null, "User Total: " + userTotal);
+                //System.out.println(" counter " + userCountVisitor.getUserCounter());
+                //JOptionPane.showMessageDialog(null, "User Total: " + userTotal);
+                JOptionPane.showMessageDialog(null, "User Total: " + userCountVisitor.getUserCounter());
             }
         });
 
         showGroupTotalButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                JOptionPane.showMessageDialog(null, "Group Total: " + groupTotal);
+                JOptionPane.showMessageDialog(null, "Group Total: " + groupCountVisitor.getGroupCounter());
             }
         });
 
