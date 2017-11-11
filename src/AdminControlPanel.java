@@ -13,13 +13,13 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 
+/**
+ * main UI for application
+ */
 public class AdminControlPanel extends JPanel {
 
     public static List<View> allRootViews = new ArrayList<>();
     private static AdminControlPanel instance;
-    private static int userTotal = 0;
-    //root group is group 1
-    private static int groupTotal = 1;
 
     private AdminControlPanel() {
 
@@ -31,8 +31,6 @@ public class AdminControlPanel extends JPanel {
 
         UserCountVisitor userCountVisitor = new UserCountVisitor();
         GroupCountVisitor groupCountVisitor = new GroupCountVisitor();
-
-
 
         //Demonstrate Composite pattern with Frame, Panels and Buttons
         TwitterJFrame tJFrame = new TwitterJFrame();
@@ -78,12 +76,12 @@ public class AdminControlPanel extends JPanel {
 
         Window window = new Window();
         window.setViews(Arrays.asList(new View[]{tJFrame, addUserButton, addGroupButton, openUserViewButton,
-                 showUserTotalButton, showGroupTotalButton, showMessagesTotalButton,
+                showUserTotalButton, showGroupTotalButton, showMessagesTotalButton,
                 showPositivePercentageButton, treeViewPanel, addUserPanel, addGroupPanel, addPanel,
                 outerEastPanel, showTopPanel, showBottomPanel, showPanel}));
         window.display();
 
-        for(View v : AdminControlPanel.allRootViews) {
+        for (View v : AdminControlPanel.allRootViews) {
             v.display();
         }
 
@@ -95,10 +93,10 @@ public class AdminControlPanel extends JPanel {
         userJTree.addTreeSelectionListener(new TreeSelectionListener() {
             @Override
             public void valueChanged(TreeSelectionEvent treeSelectionEvent) {
-                 selectedNode[0] = (DefaultMutableTreeNode)userJTree.getLastSelectedPathComponent();
+                selectedNode[0] = (DefaultMutableTreeNode) userJTree.getLastSelectedPathComponent();
             }
         });
-        DefaultMutableTreeNode firstLeaf = ((DefaultMutableTreeNode)userJTree.getModel().getRoot()).getFirstLeaf();
+        DefaultMutableTreeNode firstLeaf = ((DefaultMutableTreeNode) userJTree.getModel().getRoot()).getFirstLeaf();
         userJTree.setSelectionPath(new TreePath(firstLeaf.getPath()));
         treeViewPanel.add(userJTree);
         outerMostPanel.add(outerEastPanel, BorderLayout.EAST);
@@ -130,14 +128,18 @@ public class AdminControlPanel extends JPanel {
         addUserButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                if(!addUserText[0].equals("")) {
-                    visitorCollection.accept(userCountVisitor);
-                    DefaultTreeModel model = (DefaultTreeModel) userJTree.getModel();
-                    DefaultMutableTreeNode root = (DefaultMutableTreeNode) model.getRoot();
-                    User newUser = new User(addUserText[0]);
-                    UserRepository.getInstance().addUser(newUser);
-                    model.insertNodeInto(new DefaultMutableTreeNode(newUser), selectedNode[0], selectedNode[0].getChildCount());
-                    userTotal++;
+                if (!addUserText[0].equals("")) {
+
+                    if (UserRepository.getInstance().getUser(addUserText[0]) == null) {
+                        visitorCollection.accept(userCountVisitor);
+                        DefaultTreeModel model = (DefaultTreeModel) userJTree.getModel();
+                        DefaultMutableTreeNode root = (DefaultMutableTreeNode) model.getRoot();
+                        User newUser = new User(addUserText[0]);
+                        UserRepository.getInstance().addUser(newUser);
+                        model.insertNodeInto(new DefaultMutableTreeNode(newUser), selectedNode[0], selectedNode[0].getChildCount());
+                    } else {
+                        JOptionPane.showMessageDialog(null, "User name taken please enter a new unique name.");
+                    }
                 } else {
                     JOptionPane.showMessageDialog(null, "Please enter a user name.");
                 }
@@ -169,14 +171,12 @@ public class AdminControlPanel extends JPanel {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
 
-                if(!addGroupText[0].equals("")) {
+                if (!addGroupText[0].equals("")) {
                     visitorCollection.accept(groupCountVisitor);
                     DefaultTreeModel model = (DefaultTreeModel) userJTree.getModel();
                     DefaultMutableTreeNode root = (DefaultMutableTreeNode) model.getRoot();
                     //model.insertNodeInto(new DefaultMutableTreeNode(addGroupText[0]), root, root.getChildCount());
                     model.insertNodeInto(new DefaultMutableTreeNode(addGroupText[0]), selectedNode[0], selectedNode[0].getChildCount());
-                    groupTotal++;
-
                 } else {
                     JOptionPane.showMessageDialog(null, "Please enter a group name.");
                 }
@@ -185,7 +185,7 @@ public class AdminControlPanel extends JPanel {
         openUserViewButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                if(selectedNode[0].getUserObject() instanceof String) {
+                if (selectedNode[0].getUserObject() instanceof String) {
                     JOptionPane.showMessageDialog(null, "Element attempting to open is not a user.");
                 } else {
                     new UserViewPanel((User) selectedNode[0].getUserObject());
@@ -198,8 +198,6 @@ public class AdminControlPanel extends JPanel {
         showUserTotalButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                //System.out.println(" counter " + userCountVisitor.getUserCounter());
-                //JOptionPane.showMessageDialog(null, "User Total: " + userTotal);
                 JOptionPane.showMessageDialog(null, "User Total: " + userCountVisitor.getUserCounter());
             }
         });
@@ -224,7 +222,7 @@ public class AdminControlPanel extends JPanel {
         showPositivePercentageButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                if(MessageCounter.getInstance().getTotalMessages() != 0)
+                if (MessageCounter.getInstance().getTotalMessages() != 0)
                     JOptionPane.showMessageDialog(null, "Positive Percentage: " + MessageCounter.getInstance().positivePercentage() + "%");
                 else
                     JOptionPane.showMessageDialog(null, "Positive Percentage: " + MessageCounter.getInstance().getTotalPositiveMessages() + "%");
@@ -250,10 +248,6 @@ public class AdminControlPanel extends JPanel {
         outerEastPanel.add(addPanel, BorderLayout.NORTH);
         outerEastPanel.add(openUserViewPanel, BorderLayout.CENTER);
         outerEastPanel.add(showPanel, BorderLayout.SOUTH);
-
-//        frame.setContentPane(outerMostPanel);
-//        frame.pack();
-//        frame.setVisible(true);
 
         tJFrame.setContentPane(outerMostPanel);
         tJFrame.pack();

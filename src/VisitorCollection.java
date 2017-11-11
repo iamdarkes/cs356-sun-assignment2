@@ -1,6 +1,9 @@
 import java.util.List;
 
-public class VisitorCollection extends TwitterElement{
+/**
+ * collection of visitor elements
+ */
+public class VisitorCollection extends TwitterElement {
 
     private List<TwitterElement> collection;
 
@@ -14,7 +17,7 @@ public class VisitorCollection extends TwitterElement{
 
     @Override
     public void accept(TwitterVisitor visitor) {
-        for(TwitterElement twitterElement : collection) {
+        for (TwitterElement twitterElement : collection) {
             twitterElement.accept(visitor);
         }
     }

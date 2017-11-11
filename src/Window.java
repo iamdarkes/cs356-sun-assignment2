@@ -1,12 +1,15 @@
 import java.util.List;
 
-public class Window implements View{
+/**
+ * contains composite pattern elements containing a list of UI views
+ */
+public class Window implements View {
 
     private List<View> views;
 
     @Override
     public void display() {
-        for(View v: views) {
+        for (View v : views) {
             v.display();
         }
     }

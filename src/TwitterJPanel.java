@@ -1,7 +1,10 @@
 import javax.swing.*;
 import java.awt.*;
 
-public class TwitterJPanel extends JPanel implements View{
+/**
+ * implementation of composite pattern with custom display features for application
+ */
+public class TwitterJPanel extends JPanel implements View {
 
     public TwitterJPanel() {
         super();

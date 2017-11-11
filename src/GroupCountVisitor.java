@@ -1,10 +1,12 @@
+/**
+ * Implementation of visitor pattern
+ */
 public class GroupCountVisitor implements TwitterVisitor {
 
     private int groupCounter = 1;
 
     @Override
     public void visit(TwitterElement twitterElement) {
-        System.out.println("incremented group");
         setGroupCounter(getGroupCounter() + 1);
     }
 

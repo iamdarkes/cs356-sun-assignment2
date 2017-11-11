@@ -61,7 +61,7 @@ public class User extends Observable implements Observer {
         followers.add(user);
     }
 
-    public void addFollowing(User user){
+    public void addFollowing(User user) {
         following.add(user);
     }
 
@@ -115,41 +115,15 @@ public class User extends Observable implements Observer {
 
     @Override
     public String toString() {
-        return "User{" +
-                "userId=" + userId +
-                //", followers=" + followers +
-                //", following=" + following +
-                ", feed=" + feed +
-                ", name='" + name + '\'' +
-                '}';
+        return name;
     }
 
     @Override
     public void update(Observable observable, Object o) {
-//        if(observable instanceof User) {
-//            if(o instanceof Tweet) {
-//                for (Tweet t : ((User) observable).getFeed()) {
-//                    System.out.println(t.toString());
-//                    this.addFeed(t);
-//                }
-//            }
-//
-//            if(o instanceof User) {
-//                System.out.println("rdsaf");
-//                ((User) observable).addFollowing((User)o);
-//            }
-//        }
-//        System.out.println("tests " + observable.toString() + " " + o.toString());
+
     }
 
     void changedData(Object data) {
-//        if(data instanceof User) {
-//            addFollowing((User) data);
-//        }
-//
-//        if(data instanceof Tweet) {
-//            addFeed((Tweet)data);
-//        }
         setChanged();
         notifyObservers(data);
     }

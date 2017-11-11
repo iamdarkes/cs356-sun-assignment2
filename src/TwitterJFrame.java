@@ -1,6 +1,9 @@
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * implementation of composite pattern with custom display features for application
+ */
 public class TwitterJFrame extends JFrame implements View {
 
     @Override

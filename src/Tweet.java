@@ -42,10 +42,7 @@ public class Tweet {
 
     @Override
     public String toString() {
-        return "Tweet{" +
-                "userName=" + user.getName() +
-                ", message='" + message + '\'' +
-                ", tweetId=" + tweetId +
-                '}';
+        return user.getName() +
+                " : " + message;
     }
 }
