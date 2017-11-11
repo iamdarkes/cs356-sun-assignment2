@@ -89,8 +89,8 @@ public class User extends Observable implements Observer {
     public String toString() {
         return "User{" +
                 "userId=" + userId +
-                ", followers=" + followers +
-                ", following=" + following +
+                //", followers=" + followers +
+                //", following=" + following +
                 ", feed=" + feed +
                 ", name='" + name + '\'' +
                 '}';

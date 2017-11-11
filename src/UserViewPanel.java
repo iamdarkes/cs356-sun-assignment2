@@ -95,13 +95,24 @@ public class UserViewPanel extends JPanel {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 if(!userIdText[0].equals("")) {
-                    User following = new User(userIdText[0]);
+
+
+                    if(UserRepository.getUser(userIdText[0]) != null) {
+                        User following = UserRepository.getInstance().getUser(userIdText[0]);
+                        user.addFollowing(following);
+                        user.changedData(following);
+
+                     } else {
+                        JOptionPane.showMessageDialog(null, "User doesn't exist.");
+                    }
+
+
 
                     ///user.addFollowing(following);
 
                     //user.notifyObservers();
                     //user.update(user, following);
-                    user.changedData(following);
+
                     //user.notifyObservers();
                     //followingModel.addElement(following.getName() + " " + following.getUserId());
                     //update(user, following);

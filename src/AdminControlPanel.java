@@ -134,7 +134,9 @@ public class AdminControlPanel extends JPanel {
                     visitorCollection.accept(userCountVisitor);
                     DefaultTreeModel model = (DefaultTreeModel) userJTree.getModel();
                     DefaultMutableTreeNode root = (DefaultMutableTreeNode) model.getRoot();
-                    model.insertNodeInto(new DefaultMutableTreeNode(new User(addUserText[0])), selectedNode[0], selectedNode[0].getChildCount());
+                    User newUser = new User(addUserText[0]);
+                    UserRepository.getInstance().addUser(newUser);
+                    model.insertNodeInto(new DefaultMutableTreeNode(newUser), selectedNode[0], selectedNode[0].getChildCount());
                     userTotal++;
                 } else {
                     JOptionPane.showMessageDialog(null, "Please enter a user name.");
@@ -183,7 +185,11 @@ public class AdminControlPanel extends JPanel {
         openUserViewButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                new UserViewPanel((User)selectedNode[0].getUserObject());
+                if(selectedNode[0].getUserObject() instanceof String) {
+                    JOptionPane.showMessageDialog(null, "Element attempting to open is not a user.");
+                } else {
+                    new UserViewPanel((User) selectedNode[0].getUserObject());
+                }
             }
         });
 
