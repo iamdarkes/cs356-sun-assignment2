@@ -25,6 +25,9 @@ public class UserRepository {
         }
     }
 
+    public static Map<String, User> getUserRepository() {
+        return userRepository;
+    }
 
     public static void addUser(String userName) {
         User user = new User(userName);

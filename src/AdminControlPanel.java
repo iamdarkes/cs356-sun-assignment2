@@ -217,14 +217,18 @@ public class AdminControlPanel extends JPanel {
         showMessagesTotalButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                JOptionPane.showMessageDialog(null, "Messages Total: ");
+                JOptionPane.showMessageDialog(null, "Messages Total: " + MessageCounter.getInstance().getTotalMessages());
             }
         });
 
         showPositivePercentageButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                JOptionPane.showMessageDialog(null, "Positive Percentage: ");
+                if(MessageCounter.getInstance().getTotalMessages() != 0)
+                    JOptionPane.showMessageDialog(null, "Positive Percentage: " + MessageCounter.getInstance().positivePercentage() + "%");
+                else
+                    JOptionPane.showMessageDialog(null, "Positive Percentage: " + MessageCounter.getInstance().getTotalPositiveMessages() + "%");
+
             }
         });
 

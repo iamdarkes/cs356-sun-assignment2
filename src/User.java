@@ -6,6 +6,8 @@ public class User extends Observable implements Observer {
     private List<User> following;
     private List<Tweet> feed;
     private String name;
+    private FollowingDefaultListModelObserver followingModel;
+    private FeedDefaultListModelObserver feedModel;
 
     public User() {
         super();
@@ -13,6 +15,8 @@ public class User extends Observable implements Observer {
         this.followers = new ArrayList<>();
         this.following = new ArrayList<>();
         this.feed = new ArrayList<>();
+        this.followingModel = new FollowingDefaultListModelObserver();
+        this.feedModel = new FeedDefaultListModelObserver();
     }
 
     public User(String name) {
@@ -22,6 +26,8 @@ public class User extends Observable implements Observer {
         this.followers = new ArrayList<>();
         this.following = new ArrayList<>();
         this.feed = new ArrayList<>();
+        this.followingModel = new FollowingDefaultListModelObserver();
+        this.feedModel = new FeedDefaultListModelObserver();
     }
 
     public User(UUID userId, List<User> followers, List<User> following, List<Tweet> feed, String name) {
@@ -31,6 +37,28 @@ public class User extends Observable implements Observer {
         this.following = following;
         this.feed = feed;
         this.name = name;
+        this.followingModel = new FollowingDefaultListModelObserver();
+        this.feedModel = new FeedDefaultListModelObserver();
+    }
+
+    public FollowingDefaultListModelObserver getFollowingModel() {
+        return followingModel;
+    }
+
+    public void setFollowingModel(FollowingDefaultListModelObserver followingModel) {
+        this.followingModel = followingModel;
+    }
+
+    public FeedDefaultListModelObserver getFeedModel() {
+        return feedModel;
+    }
+
+    public void setFeedModel(FeedDefaultListModelObserver feedModel) {
+        this.feedModel = feedModel;
+    }
+
+    public void addFollower(User user) {
+        followers.add(user);
     }
 
     public void addFollowing(User user){

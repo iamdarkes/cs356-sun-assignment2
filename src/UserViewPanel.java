@@ -99,7 +99,9 @@ public class UserViewPanel extends JPanel {
 
                     if(UserRepository.getUser(userIdText[0]) != null) {
                         User following = UserRepository.getInstance().getUser(userIdText[0]);
+                        user.addObserver(following.getFeedModel());
                         user.addFollowing(following);
+                        following.addFollower(user);
                         user.changedData(following);
 
                      } else {
@@ -177,6 +179,19 @@ public class UserViewPanel extends JPanel {
                     //user.addFeed(tweet);
                     //feedModel.addElement(tweet.getMessage());
 
+                    MessageCounter.getInstance().incrementTotalMessages();
+                    for(String good : PositiveMessage.KEYWORDS) {
+                        if(tweet.getMessage().toLowerCase().contains(good)) {
+                            System.out.println("goood tweet");
+                            MessageCounter.getInstance().incrementTotalPositiveMessages();
+                            break;
+                        }
+                    }
+
+                    for(User u : user.getFollowers()) {
+                        System.out.println(u);
+                        u.changedData(tweet);
+                    }
                     user.changedData(tweet);
 
                 } else {
