@@ -8,6 +8,8 @@ public class User extends Observable implements Observer {
     private String name;
     private FollowingDefaultListModelObserver followingModel;
     private FeedDefaultListModelObserver feedModel;
+    private Long creationTime;
+    private Long lateUpdateTime;
 
     public User() {
         super();
@@ -17,6 +19,8 @@ public class User extends Observable implements Observer {
         this.feed = new ArrayList<>();
         this.followingModel = new FollowingDefaultListModelObserver();
         this.feedModel = new FeedDefaultListModelObserver();
+        this.creationTime = System.currentTimeMillis();
+        this.lateUpdateTime = 0L;
     }
 
     public User(String name) {
@@ -28,6 +32,8 @@ public class User extends Observable implements Observer {
         this.feed = new ArrayList<>();
         this.followingModel = new FollowingDefaultListModelObserver();
         this.feedModel = new FeedDefaultListModelObserver();
+        this.creationTime = System.currentTimeMillis();
+        this.lateUpdateTime = 0L;
     }
 
     public User(UUID userId, List<User> followers, List<User> following, List<Tweet> feed, String name) {
@@ -39,6 +45,8 @@ public class User extends Observable implements Observer {
         this.name = name;
         this.followingModel = new FollowingDefaultListModelObserver();
         this.feedModel = new FeedDefaultListModelObserver();
+        this.creationTime = System.currentTimeMillis();
+        this.lateUpdateTime = 0L;
     }
 
     public FollowingDefaultListModelObserver getFollowingModel() {
@@ -126,5 +134,17 @@ public class User extends Observable implements Observer {
     void changedData(Object data) {
         setChanged();
         notifyObservers(data);
+    }
+
+    public Long getCreationTime() {
+        return creationTime;
+    }
+
+    public Long getLateUpdateTime() {
+        return lateUpdateTime;
+    }
+
+    public void setLateUpdateTime(Long lateUpdateTime) {
+        this.lateUpdateTime = lateUpdateTime;
     }
 }

@@ -7,6 +7,7 @@ public class UserGroup {
     private String name;
     private List<User> users;
     private List<UserGroup> userGroups;
+    private Long creationTime;
 
     public UserGroup(UUID groupId) {
         this.groupId = UUID.randomUUID();
@@ -17,6 +18,7 @@ public class UserGroup {
         this.name = name;
         this.users = users;
         this.userGroups = userGroups;
+        this.creationTime = System.currentTimeMillis();
     }
 
     public String getName() {
@@ -59,5 +61,9 @@ public class UserGroup {
                 ", users=" + users +
                 ", userGroups=" + userGroups +
                 '}';
+    }
+
+    public Long getCreationTime() {
+        return creationTime;
     }
 }

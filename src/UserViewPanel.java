@@ -4,6 +4,7 @@ import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Date;
 import java.util.UUID;
 
 /**
@@ -13,6 +14,7 @@ public class UserViewPanel extends JPanel {
 
     FollowingDefaultListModelObserver followingModel;
     FeedDefaultListModelObserver feedModel;
+    JLabelObserver jLabelObserver = new JLabelObserver();
 
     public UserViewPanel(User user) {
         JFrame frame = new JFrame(user.getName() + " View");
@@ -22,6 +24,9 @@ public class UserViewPanel extends JPanel {
 
         //all elements nested inside
         JPanel outerMostPanel = new JPanel(new BorderLayout());
+
+        //outerMostPanel and timePanel
+        JPanel outerestMostPanel = new JPanel(new BorderLayout());
 
         //contains followingUserPanel, followingPanel, nested in outerMostPanel
         JPanel topPanel = new JPanel(new BorderLayout());
@@ -47,6 +52,10 @@ public class UserViewPanel extends JPanel {
         JPanel feedPanel = new JPanel(new BorderLayout());
         feedPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
+        //creation time panel, inside outerestMostPanel
+        JPanel creationTimePanel = new JPanel(new BorderLayout());
+        creationTimePanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+
         outerMostPanel.add(topPanel, BorderLayout.NORTH);
         outerMostPanel.add(bottomPanel, BorderLayout.SOUTH);
 
@@ -55,6 +64,16 @@ public class UserViewPanel extends JPanel {
 
         bottomPanel.add(tweetPanel, BorderLayout.NORTH);
         bottomPanel.add(feedPanel, BorderLayout.SOUTH);
+
+        outerestMostPanel.add(creationTimePanel, BorderLayout.NORTH);
+        outerestMostPanel.add(outerMostPanel, BorderLayout.SOUTH);
+
+        //JLabel lastUpdatedTime = new JLabel("Last Updated Time: " + new Date(user.getLateUpdateTime()));
+        jLabelObserver.setText("Last Updated Time: " + new Date(user.getLateUpdateTime()).toString());
+
+
+        creationTimePanel.add(new JLabel("User Creation Time: " + new Date(user.getCreationTime())), BorderLayout.NORTH);
+        creationTimePanel.add(jLabelObserver, BorderLayout.SOUTH);
 
         followingModel = new FollowingDefaultListModelObserver();
         user.addObserver(followingModel);
@@ -125,6 +144,8 @@ public class UserViewPanel extends JPanel {
         feedModel = new FeedDefaultListModelObserver();
         user.addObserver(feedModel);
 
+        user.addObserver(jLabelObserver);
+
         JTextField tweetTextField = new JTextField(10);
         final String[] tweetText = {""};
         tweetTextField.getDocument().addDocumentListener(new DocumentListener() {
@@ -171,9 +192,14 @@ public class UserViewPanel extends JPanel {
 
                     for (User u : user.getFollowers()) {
                         System.out.println(u);
+                        u.setLateUpdateTime(System.currentTimeMillis());
+                        u.changedData(System.currentTimeMillis());
                         u.changedData(tweet);
                     }
                     user.changedData(tweet);
+                    user.changedData(System.currentTimeMillis());
+                    //lastUpdatedTime.setText("Last Updated Time: " + new Date(user.getLateUpdateTime()).toString());
+                    //jLabelObserver.setText("Last Updated Time: " + new Date(user.getLateUpdateTime()).toString());
 
                 } else {
                     JOptionPane.showMessageDialog(null, "Please enter a something to tweet.");
@@ -191,7 +217,7 @@ public class UserViewPanel extends JPanel {
         JScrollPane feedListScroller = new JScrollPane(feedJList);
         feedPanel.add(feedListScroller);
 
-        frame.setContentPane(outerMostPanel);
+        frame.setContentPane(outerestMostPanel);
         frame.pack();
         frame.setVisible(true);
 

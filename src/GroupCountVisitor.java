@@ -10,6 +10,11 @@ public class GroupCountVisitor implements TwitterVisitor {
         setGroupCounter(getGroupCounter() + 1);
     }
 
+    @Override
+    public void visit(User user) {
+
+    }
+
     public int getGroupCounter() {
         return groupCounter;
     }

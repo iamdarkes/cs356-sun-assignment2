@@ -12,6 +12,7 @@ public class FeedDefaultListModelObserver extends DefaultListModel implements Ob
             if (!((User) observable).getFeed().contains(o)) {
                 ((User) observable).addFeed((Tweet) o);
             }
+            //((User) observable).setLateUpdateTime(System.currentTimeMillis());
             addElement(this, o);
         }
 

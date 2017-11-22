@@ -10,6 +10,11 @@ public class UserCountVisitor implements TwitterVisitor {
         setUserCounter(getUserCounter() + 1);
     }
 
+    @Override
+    public void visit(User user) {
+
+    }
+
     public int getUserCounter() {
         return userCounter;
     }

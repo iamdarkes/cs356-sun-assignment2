@@ -25,12 +25,14 @@ public class AdminControlPanel extends JPanel {
 
         UserCounter userCounter = new UserCounter();
         GroupCounter groupCounter = new GroupCounter();
+        LastUpdated lastUpdated = new LastUpdated();
 
         VisitorCollection visitorCollection = new VisitorCollection();
-        visitorCollection.setCollection(Arrays.asList(new TwitterElement[]{userCounter, groupCounter}));
+        visitorCollection.setCollection(Arrays.asList(new TwitterElement[]{userCounter, groupCounter,lastUpdated}));
 
         UserCountVisitor userCountVisitor = new UserCountVisitor();
         GroupCountVisitor groupCountVisitor = new GroupCountVisitor();
+        LastUpdatedVisitor lastUpdatedVisitor = new LastUpdatedVisitor();
 
         //Demonstrate Composite pattern with Frame, Panels and Buttons
         TwitterJFrame tJFrame = new TwitterJFrame();
@@ -66,6 +68,14 @@ public class AdminControlPanel extends JPanel {
         //showTopPanel, showBottomPanel nested inside, inside outerEastPanel
         TwitterJPanel showPanel = new TwitterJPanel(new BorderLayout());
 
+        //validInput, lastUpdated nested inside, inside
+        TwitterJPanel validAndLastUpdatedPanel = new TwitterJPanel(new BorderLayout());
+
+        //validAndLastUpdatedPanel, showTopPanel, inside
+        TwitterJPanel adminPanel = new TwitterJPanel(new BorderLayout());
+
+
+
         TwitterJButton addUserButton = new TwitterJButton("Add User");
         TwitterJButton addGroupButton = new TwitterJButton("Add Group");
         TwitterJButton openUserViewButton = new TwitterJButton("Open User View");
@@ -73,17 +83,25 @@ public class AdminControlPanel extends JPanel {
         TwitterJButton showGroupTotalButton = new TwitterJButton("Show Group Total");
         TwitterJButton showMessagesTotalButton = new TwitterJButton("Show Messages Total");
         TwitterJButton showPositivePercentageButton = new TwitterJButton("Show Positive Percentage");
+        TwitterJButton validInputButton = new TwitterJButton("Show Invalid Input");
+        TwitterJButton lastUpdateTimeButton = new TwitterJButton("Show Last Updated User");
 
         Window window = new Window();
         window.setViews(Arrays.asList(new View[]{tJFrame, addUserButton, addGroupButton, openUserViewButton,
                 showUserTotalButton, showGroupTotalButton, showMessagesTotalButton,
                 showPositivePercentageButton, treeViewPanel, addUserPanel, addGroupPanel, addPanel,
-                outerEastPanel, showTopPanel, showBottomPanel, showPanel}));
+                outerEastPanel, showTopPanel, showBottomPanel, showPanel, validAndLastUpdatedPanel, adminPanel}));
         window.display();
 
         for (View v : AdminControlPanel.allRootViews) {
             v.display();
         }
+
+        validAndLastUpdatedPanel.add(validInputButton, BorderLayout.EAST);
+        validAndLastUpdatedPanel.add(lastUpdateTimeButton, BorderLayout.WEST);
+
+        adminPanel.add(validAndLastUpdatedPanel, BorderLayout.NORTH);
+        adminPanel.add(showTopPanel, BorderLayout.SOUTH);
 
         DefaultMutableTreeNode root = new DefaultMutableTreeNode("Root");
         JTree userJTree = new JTree(root);
@@ -129,8 +147,10 @@ public class AdminControlPanel extends JPanel {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 if (!addUserText[0].equals("")) {
-
                     if (UserRepository.getInstance().getUser(addUserText[0]) == null) {
+                        if(addUserText[0].contains(" ")) {
+                            InvalidInputCounter.getInstance().incrementCounter();
+                        }
                         visitorCollection.accept(userCountVisitor);
                         DefaultTreeModel model = (DefaultTreeModel) userJTree.getModel();
                         DefaultMutableTreeNode root = (DefaultMutableTreeNode) model.getRoot();
@@ -172,6 +192,9 @@ public class AdminControlPanel extends JPanel {
             public void actionPerformed(ActionEvent actionEvent) {
 
                 if (!addGroupText[0].equals("")) {
+                    if(addGroupText[0].contains(" ")) {
+                        InvalidInputCounter.getInstance().incrementCounter();
+                    }
                     visitorCollection.accept(groupCountVisitor);
                     DefaultTreeModel model = (DefaultTreeModel) userJTree.getModel();
                     DefaultMutableTreeNode root = (DefaultMutableTreeNode) model.getRoot();
@@ -230,10 +253,30 @@ public class AdminControlPanel extends JPanel {
             }
         });
 
+        validInputButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                JOptionPane.showMessageDialog(null, "Invalid Input Count: " + InvalidInputCounter.getInstance().getCounter());
+            }
+        });
+
+
+
+        lastUpdateTimeButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                for(User user : UserRepository.getInstance().getUserRepository().values()) {
+                    lastUpdatedVisitor.visit(user);
+                }
+                JOptionPane.showMessageDialog(null, "Last Updated User: " + lastUpdatedVisitor.getUserLastUpdated());
+            }
+        });
+
         showBottomPanel.add(showMessagesTotalButton, BorderLayout.WEST);
         showBottomPanel.add(showPositivePercentageButton, BorderLayout.EAST);
 
-        showPanel.add(showTopPanel, BorderLayout.NORTH);
+        //showPanel.add(showTopPanel, BorderLayout.NORTH);
+        showPanel.add(adminPanel, BorderLayout.NORTH);
         showPanel.add(showBottomPanel, BorderLayout.SOUTH);
 
         addUserPanel.add(addUserTextField, BorderLayout.WEST);
